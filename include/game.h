@@ -4,6 +4,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "maze.h"
+#include "resource_manager.h"
+#include "sprite_renderer.h"
+#include "line_renderer.h"
+
 // numbers to represent the current state of the game
 enum GameStatus {
 	GAME_ACTIVE,
@@ -16,6 +21,7 @@ class Game {
 		// game properties currently
 		GameStatus Status;
 		bool Keys[1024];
+		bool PrevKeys[1024];
 		unsigned int Width, Height;
 
 		// constructor/destructor

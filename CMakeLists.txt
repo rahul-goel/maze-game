@@ -9,9 +9,13 @@ set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(SOURCES
 	"${SRC_DIR}/main.cpp"
 	"${SRC_DIR}/game.cpp"
+	"${SRC_DIR}/maze.cpp"
 	"${SRC_DIR}/shader.cpp"
 	"${SRC_DIR}/texture.cpp"
-	"${SRC_DIR}/resource_manager.cpp")
+	"${SRC_DIR}/resource_manager.cpp"
+	"${SRC_DIR}/line_renderer.cpp"
+	"${SRC_DIR}/character.cpp"
+	"${SRC_DIR}/sprite_renderer.cpp")
 
 # Executable definition and properties
 add_executable(${PROJECT_NAME} ${SOURCES})

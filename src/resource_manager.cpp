@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <iterator>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
