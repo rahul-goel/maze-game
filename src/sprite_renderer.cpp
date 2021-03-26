@@ -27,6 +27,7 @@ void SpriteRenderer::DrawSprite(Texture2D &texture, glm::vec2 position, glm::vec
 
 	// render textured quad
 	this->shader.SetVector3f("spriteColor", color);
+	this->shader.SetVector3f("light", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// glActiveTexture(GL_TEXTURE0);
 	// texture.Bind();

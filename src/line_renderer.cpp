@@ -11,7 +11,7 @@ LineRenderer::~LineRenderer() {
 	glDeleteVertexArrays(1, &this->lineVAO);
 }
 
-void LineRenderer::DrawLine(glm::vec2 position_start, glm::vec2 position_end, glm::vec3 color) {
+void LineRenderer::DrawLine(glm::vec2 position_start, glm::vec2 position_end, glm::vec3 color, float intensity) {
 	// prepare transformations
 	this->shader.Use();
 	glm::mat4 model = glm::mat4(1.0f);
@@ -25,6 +25,10 @@ void LineRenderer::DrawLine(glm::vec2 position_start, glm::vec2 position_end, gl
 
 	// render textured quad
 	this->shader.SetVector3f("spriteColor", color);
+
+	// light
+	glm::vec3 light = glm::vec3(intensity, intensity, intensity);
+	this->shader.SetVector3f("light", light);
 
 	// glActiveTexture(GL_TEXTURE0);
 	// texture.Bind();

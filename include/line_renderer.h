@@ -16,7 +16,7 @@ class LineRenderer {
 		// Destructor
 		~LineRenderer();
 		// Renders a defined quad textured with given sprite
-		void DrawLine(glm::vec2 position_start, glm::vec2 position_end, glm::vec3 color = glm::vec3(1.0f));
+		void DrawLine(glm::vec2 position_start, glm::vec2 position_end, glm::vec3 color = glm::vec3(1.0f), float intensity = 1.0f);
 	private:
 		// Render state
 		Shader shader;
