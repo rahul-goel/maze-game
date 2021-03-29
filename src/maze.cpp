@@ -76,7 +76,7 @@ void Maze::Render(LineRenderer *line_renderer, glm::vec2 light_source, bool ligh
 			if (distance == 0) {
 				intensity = 1;
 			} else {
-				intensity = 1 / distance;
+				intensity = 1 * pow(2, -distance);
 			}
 			if (light) {
 				intensity = 1;

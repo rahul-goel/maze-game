@@ -9,8 +9,9 @@ bool LIGHT = true;
 
 SpriteRenderer  *Renderer;
 LineRenderer *line_renderer;
+CircleRenderer *circle_renderer;
 Maze *maze;
-Character *character;
+Character *player;
 
 Game::Game(unsigned int width, unsigned int height) : Status(GAME_ACTIVE), Keys(), Width(width), Height(height) {
 }
@@ -30,7 +31,8 @@ void Game::Init() {
 	Shader spriteShader = ResourceManager::GetShader("sprite");
 	Renderer = new SpriteRenderer(spriteShader);
 	line_renderer = new LineRenderer(spriteShader);
-	character = new Character(glm::vec2(0, 0), glm::vec2(CELL_SIZE, CELL_SIZE));
+	player = new Character(glm::vec2(0, 0), glm::vec2(CELL_SIZE, CELL_SIZE), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	circle_renderer = new CircleRenderer(spriteShader);
 
 	maze = new Maze(LEN, LEN, CELL_SIZE, CELL_SIZE);
 	maze->initRenderData();
@@ -50,38 +52,38 @@ void Game::ProcessInput(float dt) {
 		// move if not bounded by box
 		{
 			if (this->PrevKeys[GLFW_KEY_A] == false && this->Keys[GLFW_KEY_A] == true) {
-				if (character->Position.y > 0) {
-					int x = character->Position.x;
-					int y = character->Position.y;
+				if (player->Position.y > 0) {
+					int x = player->Position.x;
+					int y = player->Position.y;
 					if (maze->edges[x][y][3] == 0)  {
-						character->Position.y -= 1;
+						player->Position.y -= 1;
 					}
 				}
 			}
 			if (this->PrevKeys[GLFW_KEY_D] == false && this->Keys[GLFW_KEY_D] == true) {
-				if (character->Position.y < LEN - 1) {
-					int x = character->Position.x;
-					int y = character->Position.y;
+				if (player->Position.y < LEN - 1) {
+					int x = player->Position.x;
+					int y = player->Position.y;
 					if (maze->edges[x][y][1] == 0)  {
-						character->Position.y += 1;
+						player->Position.y += 1;
 					}
 				}
 			}
 			if (this->PrevKeys[GLFW_KEY_S] == false && this->Keys[GLFW_KEY_S] == true) {
-				if (character->Position.x < LEN - 1) {
-					int x = character->Position.x;
-					int y = character->Position.y;
+				if (player->Position.x < LEN - 1) {
+					int x = player->Position.x;
+					int y = player->Position.y;
 					if (maze->edges[x][y][2] == 0)  {
-						character->Position.x += 1;
+						player->Position.x += 1;
 					}
 				}
 			}
 			if (this->PrevKeys[GLFW_KEY_W] == false && this->Keys[GLFW_KEY_W] == true) {
-				if (character->Position.x > 0) {
-					int x = character->Position.x;
-					int y = character->Position.y;
+				if (player->Position.x > 0) {
+					int x = player->Position.x;
+					int y = player->Position.y;
 					if (maze->edges[x][y][0] == 0)  {
-						character->Position.x -= 1;
+						player->Position.x -= 1;
 					}
 				}
 			}
@@ -98,6 +100,7 @@ void Game::Render() {
 			static_cast<float>(this->Height), 0.0f, -1.0f, 1.0f);
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 	Texture2D tex;
-	character->Render(Renderer);
-	maze->Render(line_renderer, character->Position, LIGHT);
+	//circle
+	player->Render(Renderer, circle_renderer);
+	maze->Render(line_renderer, player->Position, LIGHT);
 }

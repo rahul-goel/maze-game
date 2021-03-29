@@ -8,6 +8,7 @@
 #include "resource_manager.h"
 #include "sprite_renderer.h"
 #include "line_renderer.h"
+#include "circle_renderer.h"
 
 // numbers to represent the current state of the game
 enum GameStatus {
