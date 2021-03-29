@@ -5,6 +5,7 @@
 #include "resource_manager.h"
 
 #include <iostream>
+#include <thread>
 
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
 
 		// update game state
 		// -----------------
-		MyGame.Update(deltaTime);
+		bool exit = MyGame.Update(deltaTime);
 
 		// render
 		// ------
@@ -81,6 +82,10 @@ int main(int argc, char *argv[])
 		MyGame.Render();
 
 		glfwSwapBuffers(window);
+		if (exit) {
+			std::this_thread::sleep_for (std::chrono::seconds(1));
+			break;
+		}
 	}
 
 	// delete all resources as loaded using the resource manager

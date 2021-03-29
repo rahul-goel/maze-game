@@ -21,6 +21,7 @@ glm::vec2 Character::getCircleCenter() {
 }
 
 void Character::Render(SpriteRenderer *renderer, CircleRenderer * circle_renderer, float intensity) {
+	this->exist = true;
 	Texture2D tex;
 	//circle
 	circle_renderer->DrawCircle(tex, this->getCircleCenter(), this->CircleRadius, this->BodyColor, intensity);

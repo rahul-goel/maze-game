@@ -1,26 +1,59 @@
 #include "game.h"
 #include "character.h"
+#include "object.h"
 #include <climits>
 #include <iostream>
 #include <queue>
 #include <utility>
 #include <ctime>
 #include <chrono>
+#include <thread>
+
+// time
+typedef std::chrono::high_resolution_clock Time;
+typedef std::chrono::milliseconds ms;
+typedef std::chrono::duration<float> fsec;
+
+// colors
+glm::vec3 RED(1.0f, 0.0f, 0.0f);
+glm::vec3 GREEN(0.0f, 1.0f, 0.0f);
+glm::vec3 BLUE(0.0f, 0.0f, 1.0f);
+glm::vec3 YELLOW(1.0f, 1.0f, 0.0f);
+glm::vec3 ORANGE(1.0f, 0.6f, 0.2f);
 
 float LEN = 20;
 float CELL_SIZE = 50;
-
 bool LIGHT = true;
+unsigned int SCORE = 0;
+Time::time_point time_track;
+unsigned int COUNTDOWN = 30;
 
 SpriteRenderer  *Renderer;
 LineRenderer *line_renderer;
 CircleRenderer *circle_renderer;
+
 Maze *maze;
 Character *player;
-
 Character *impostor;
-time_t impostor_move_time = 0;
-time_t impostor_time_delta = 1;
+Time::time_point impostor_move_time;
+int impostor_time_delta = 300; //ms
+
+Object *imp_vap_but;
+Object *second_button;
+std::vector<Object> obstacles;
+std::vector<Object> powerups;
+
+void every_second() {
+	auto now = Time::now();
+	auto diff = Time::now() - time_track;
+	auto diff_ms = std::chrono::duration_cast<ms>(diff);
+	if (diff_ms.count() < 1000) {
+		return;
+	}
+	time_track = Time::now();
+	COUNTDOWN -= 1;
+	SCORE += 1;
+}
 
 float intensity_calc(glm::vec2 pos) {
 	glm::vec2 light_source = player->Position;
@@ -38,11 +71,14 @@ float intensity_calc(glm::vec2 pos) {
 }
 
 glm::vec2 impostor_move() {
-	if (time(nullptr) < impostor_move_time + impostor_time_delta || impostor->Position == player->Position) {
+	auto now = Time::now();
+	auto diff = Time::now() - impostor_move_time;
+	auto diff_ms = std::chrono::duration_cast<ms>(diff);
+	if (diff_ms.count() < impostor_time_delta || impostor->Position == player->Position) {
 		return impostor->Position;
 	}
 
-	impostor_move_time = time(nullptr);
+	impostor_move_time = Time::now();
 	std::queue<std::pair<int,int>> q;
 	std::vector<std::vector<bool>> vis(LEN, std::vector<bool>(LEN, false));
 	std::vector<std::vector<int>> dist(LEN, std::vector<int>(LEN, INT_MAX));
@@ -107,6 +143,10 @@ Game::~Game() {
 
 
 void Game::Init() {
+	// random seed
+	srand(time(nullptr));
+	time_track = Time::now();
+
 	// load shaders
 	ResourceManager::LoadShader("../shaders/sprite.vs", "../shaders/sprite.frag", nullptr, "sprite");
 	// configure shaders
@@ -120,7 +160,15 @@ void Game::Init() {
 	player = new Character(glm::vec2(0, 0), glm::vec2(CELL_SIZE, CELL_SIZE), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
 	impostor = new Character(glm::vec2(LEN - 1, LEN - 1), glm::vec2(CELL_SIZE, CELL_SIZE), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f));
-	impostor_move_time = time(nullptr);
+	impostor_move_time = Time::now();
+
+	glm::vec2 imp_vap_but_pos = glm::vec2(rand() % (int) LEN, rand() % (int) LEN);
+	glm::vec2 imp_vap_but_size = glm::vec2(glm::vec2(CELL_SIZE, CELL_SIZE));
+	imp_vap_but = new Object(imp_vap_but_pos, imp_vap_but_size, BLUE);
+
+	glm::vec2 second_button_pos = glm::vec2(rand() % (int) LEN, rand() % (int) LEN);
+	glm::vec2 second_button_size = glm::vec2(glm::vec2(CELL_SIZE, CELL_SIZE));
+	second_button = new Object(second_button_pos, second_button_size, GREEN);
 
 	circle_renderer = new CircleRenderer(spriteShader);
 
@@ -128,12 +176,59 @@ void Game::Init() {
 	maze->initRenderData();
 }
 
-void Game::Update(float dt) {
+bool Game::Update(float dt) {
+	every_second();
+
 	for (int i = 0; i < 1024; i++) {
 		this->PrevKeys[i] = this->Keys[i];
 		this->Keys[i] = false;
 	}
 	impostor->Position = impostor_move();
+
+	if (second_button->exist && second_button->Position == player->Position) {
+		second_button->exist = false;
+		for (int i = 0; i < 2; i++) {
+			glm::vec2 pos = glm::vec2(rand() % (int) LEN, rand() % (int) LEN);
+			glm::vec2 size = glm::vec2(glm::vec2(CELL_SIZE, CELL_SIZE));
+			obstacles.push_back(Object(pos, size, YELLOW));
+		}
+		for (int i = 0; i < 2; i++) {
+			glm::vec2 pos = glm::vec2(rand() % (int) LEN, rand() % (int) LEN);
+			glm::vec2 size = glm::vec2(glm::vec2(CELL_SIZE, CELL_SIZE));
+			powerups.push_back(Object(pos, size, ORANGE));
+		}
+	}
+
+	for (auto &obs : obstacles) {
+		if (obs.exist && obs.Position == player->Position) {
+			SCORE -= 10;
+			obs.exist = false;
+		}
+	}
+
+	for (auto &po : powerups) {
+		if (po.exist && po.Position == player->Position) {
+			SCORE += 10;
+			po.exist = false;
+		}
+	}
+
+	if (imp_vap_but->exist && imp_vap_but->Position == player->Position) {
+		imp_vap_but->exist = false;
+		impostor->exist = false;
+		SCORE += 20;
+	}
+
+	if (impostor->exist && impostor->Position == player->Position) {
+		return true;
+	}
+	if (player->Position == glm::vec2(LEN - 1, LEN - 1)) {
+		return true;
+	}
+	if (COUNTDOWN == 0) {
+		return true;
+	}
+	return false;
 }
 
 void Game::ProcessInput(float dt) {
@@ -192,6 +287,29 @@ void Game::Render() {
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 	Texture2D tex;
 	player->Render(Renderer, circle_renderer);
-	impostor->Render(Renderer, circle_renderer, intensity_calc(impostor->Position));
 	maze->Render(line_renderer, player->Position, LIGHT);
+
+	if (impostor->exist) {
+		impostor->Render(Renderer, circle_renderer, intensity_calc(impostor->Position));
+	}
+	if (imp_vap_but->exist) {
+		imp_vap_but->Render(Renderer, circle_renderer);
+	}
+	if (second_button->exist) {
+		second_button->Render(Renderer, circle_renderer);
+	}
+
+	for (auto &obs : obstacles) {
+		if (obs.exist) {
+			obs.Render(Renderer, circle_renderer);
+		}
+	}
+	for (auto &po : powerups) {
+		if (po.exist) {
+			po.Render(Renderer, circle_renderer);
+		}
+	}
+
+	std::cout << "SCORE: " << SCORE << std::endl;
+	std::cout << "TIME: " << COUNTDOWN << std::endl;
 }

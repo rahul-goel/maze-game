@@ -34,7 +34,7 @@ class Game {
 
 		// game loop
 		void ProcessInput(float dt);
-		void Update(float dt);
+		bool Update(float dt);
 		void Render();
 };
 

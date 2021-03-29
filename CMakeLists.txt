@@ -15,6 +15,7 @@ set(SOURCES
 	"${SRC_DIR}/resource_manager.cpp"
 	"${SRC_DIR}/line_renderer.cpp"
 	"${SRC_DIR}/circle_renderer.cpp"
+	"${SRC_DIR}/object.cpp"
 	"${SRC_DIR}/character.cpp"
 	"${SRC_DIR}/sprite_renderer.cpp")
 
