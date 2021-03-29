@@ -16,7 +16,7 @@ class CircleRenderer {
 		// Destructor
 		~CircleRenderer();
 		// Renders a defined quad textured with given sprite
-		void DrawCircle(Texture2D &texture, glm::vec2 position, float radius = 1.0f, glm::vec3 color = glm::vec3(1.0f));
+		void DrawCircle(Texture2D &texture, glm::vec2 position, float radius = 1.0f, glm::vec3 color = glm::vec3(1.0f), float intensity = 1.0f);
 	private:
 		// Render state
 		Shader shader;

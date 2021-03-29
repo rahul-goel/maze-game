@@ -20,19 +20,19 @@ glm::vec2 Character::getCircleCenter() {
 	return ret;
 }
 
-void Character::Render(SpriteRenderer *renderer, CircleRenderer * circle_renderer) {
+void Character::Render(SpriteRenderer *renderer, CircleRenderer * circle_renderer, float intensity) {
 	Texture2D tex;
 	//circle
-	circle_renderer->DrawCircle(tex, this->getCircleCenter(), this->CircleRadius, this->BodyColor);
+	circle_renderer->DrawCircle(tex, this->getCircleCenter(), this->CircleRadius, this->BodyColor, intensity);
 	//rest of body
 	glm::vec2 bodyPosition = this->getCircleCenter();
 	bodyPosition.x -= this->CircleRadius;
 	glm::vec2 bodySize = glm::vec2(2 * CircleRadius, this->Size.y / 2);
-	renderer->DrawSprite(tex, bodyPosition, bodySize, 0.0f, this->BodyColor);
+	renderer->DrawSprite(tex, bodyPosition, bodySize, 0.0f, this->BodyColor, intensity);
 
 	//eyes
 	glm::vec2 eyePosition = this->getCircleCenter();
 	eyePosition.y -= this->CircleRadius / 2;
-	glm::vec2 eyeSize = glm::vec2(CircleRadius / 1.2, CircleRadius / 2);
-	renderer->DrawSprite(tex, eyePosition, eyeSize, 0.0f, this->EyeColor);
+	glm::vec2 eyeSize = glm::vec2(CircleRadius / 1.2, CircleRadius / 1.5);
+	renderer->DrawSprite(tex, eyePosition, eyeSize, 0.0f, this->EyeColor, intensity);
 }

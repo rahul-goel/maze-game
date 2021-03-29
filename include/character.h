@@ -16,7 +16,7 @@ class Character {
 		glm::vec3 BodyColor;
 		float CircleRadius;
 		Character(glm::vec2 pos, glm::vec2 Size, glm::vec3 eye_color, glm::vec3 body_color);
-		void Render(SpriteRenderer *renderer, CircleRenderer *circle_renderer);
+		void Render(SpriteRenderer *renderer, CircleRenderer *circle_renderer, float intensity = 1.0f);
 
 	private:
 		glm::vec2 getCircleCenter();
