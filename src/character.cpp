@@ -11,6 +11,10 @@ Character::Character(glm::vec2 pos, glm::vec2 size, glm::vec3 eye_color, glm::ve
 	this->CircleRadius = size.x / 4;
 	this->EyeColor = eye_color;
 	this->BodyColor = body_color;
+	this->exist = true;
+}
+
+Character::~Character() {
 }
 
 glm::vec2 Character::getCircleCenter() {
@@ -21,7 +25,6 @@ glm::vec2 Character::getCircleCenter() {
 }
 
 void Character::Render(SpriteRenderer *renderer, CircleRenderer * circle_renderer, float intensity) {
-	this->exist = true;
 	Texture2D tex;
 	//circle
 	circle_renderer->DrawCircle(tex, this->getCircleCenter(), this->CircleRadius, this->BodyColor, intensity);

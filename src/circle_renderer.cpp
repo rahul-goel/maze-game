@@ -8,7 +8,6 @@ CircleRenderer::CircleRenderer(Shader &shader) {
 }
 
 CircleRenderer::~CircleRenderer() {
-	glDeleteVertexArrays(1, &this->circleVAO);
 }
 
 void CircleRenderer::DrawCircle(Texture2D &texture, glm::vec2 position, float radius, glm::vec3 color, float intensity) {

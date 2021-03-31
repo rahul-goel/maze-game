@@ -15,7 +15,7 @@ unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 auto rng = std::default_random_engine(seed);
 std::uniform_real_distribution<double> distribution(0.0f, 100.0f);
 
-Maze::Maze(int nr, int nc, int w, int h) : num_rows(nr), num_cols(nc), width(w), height(h) {
+Maze::Maze(int nr, int nc, int w, int h, glm::vec3 col) : num_rows(nr), num_cols(nc), width(w), height(h), color(col) {
 	edges.resize(nr, std::vector<std::array<int, 4>>(nc));
 	num_cells = num_rows * num_cols;
 	num_edges = 2 * num_rows * num_cols + num_rows + num_cols;

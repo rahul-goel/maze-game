@@ -17,6 +17,7 @@ set(SOURCES
 	"${SRC_DIR}/circle_renderer.cpp"
 	"${SRC_DIR}/object.cpp"
 	"${SRC_DIR}/character.cpp"
+	"${SRC_DIR}/text_renderer.cpp"
 	"${SRC_DIR}/sprite_renderer.cpp")
 
 # Executable definition and properties
@@ -45,3 +46,14 @@ target_link_libraries(${PROJECT_NAME} "glad" "${CMAKE_DL_LIBS}")
 #glm
 set(GLM_DIR "${LIB_DIR}/glm")
 target_include_directories(${PROJECT_NAME} PRIVATE "${GLM_DIR}")
+
+#freetype
+set(FTP_DIR "${LIB_DIR}/freetype")
+target_include_directories(${PROJECT_NAME} PRIVATE "${FTP_DIR}")
+
+#root
+set(ROOT_DIR "${LIB_DIR}")
+target_include_directories(${PROJECT_NAME} PRIVATE "${ROOT_DIR}")
+
+#flags
+SET(CMAKE_CXX_FLAGS  "-lfreetype")

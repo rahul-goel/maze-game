@@ -6,6 +6,12 @@
 
 #include <iostream>
 #include <thread>
+#include <chrono>
+
+
+typedef std::chrono::high_resolution_clock Time;
+typedef std::chrono::milliseconds ms;
+typedef std::chrono::duration<float> fsec;
 
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -83,7 +89,15 @@ int main(int argc, char *argv[])
 
 		glfwSwapBuffers(window);
 		if (exit) {
-			std::this_thread::sleep_for (std::chrono::seconds(1));
+			auto now = Time::now();
+			while (true) {
+				auto diff = Time::now() - now;
+				auto diff_ms = std::chrono::duration_cast<ms>(diff);
+				if (diff_ms.count() > 1000) {
+					break;
+				}
+				MyGame.Render();
+			}
 			break;
 		}
 	}

@@ -8,7 +8,6 @@ LineRenderer::LineRenderer(Shader &shader) {
 }
 
 LineRenderer::~LineRenderer() {
-	glDeleteVertexArrays(1, &this->lineVAO);
 }
 
 void LineRenderer::DrawLine(glm::vec2 position_start, glm::vec2 position_end, glm::vec3 color, float intensity) {
