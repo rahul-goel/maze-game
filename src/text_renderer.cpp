@@ -44,8 +44,7 @@ void TextRenderer::Load(std::string font, unsigned int fontSize) {
 	// then for the first 128 ASCII characters, pre-load/compile their characters and store them
 	for (GLubyte c = 0; c < 128; c++) {
 		// load character glyph
-		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-		{
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
 			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
 			continue;
 		}
